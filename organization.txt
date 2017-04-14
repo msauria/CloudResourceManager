@@ -1,0 +1,30 @@
+1.  Load job YAML
+2.  Parse dependency chains and populate staging queue
+3.  Determine state of each job (finished, running, missing inputs, waiting for inputs)
+4.  propogate missing, errored states up workflow chains
+5.  Initial population of job queue
+6.  Identify correct machine based on resource needs
+    Repeat while valid jobs remain
+7.      Repeat while resources remain that match with jobs in queue
+8.          determine next job to run
+9.          determine if instance already exists and is free
+10.         spin up new instance if needed
+11.         begin job, getting IP back
+12.     Stop unused instances
+13.     Monitor jobs until termination signal is found
+14.     Move jobs from staging queue to job queue or error queue based on termination state
+
+1.  jobs/Job.parser(fname)
+2.  mananger/Manager.resolve_dependency_chain({jobs}) > None
+3.  jobs/Job.resolve_state() > None
+4.  manager/Manager.propogate_states({jobs}) > None
+5.  manage/Manager.populate_queue({jobs}) > None
+6.  cloudutils/determine_machine(resources) > machine_type
+7.  manager/submit_jobs(queue)
+8.  jobs/Job.score_job(available_resources) > best_job
+9. cloudutils/check_idle_machines(machine_type) > bool
+10. cloudutils/launch(machine_type) > ip
+11. cloudutils/job_runner(ip, job_yaml) > None
+12. cloudutils/delete(ip) > None
+13. cloudutils/monitor(ip_list) > [finished_jobs]
+14. manager/Manager.populate_queues({jobs}) > None
